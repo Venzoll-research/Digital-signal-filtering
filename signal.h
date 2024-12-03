@@ -1,8 +1,11 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
-#include <iostream>
+#include <algorithm>
+#include <cmath>
 #include <fstream>
+#include <iostream>
+#include <numeric>  //для вычисления суммы квадратов отклонений от среднего значения
 #include <vector>
 
 class Signal {
@@ -12,6 +15,8 @@ public:
 
     // Конструктор с параметром
     Signal(const std::vector<double>& values);
+
+    ~Signal();
 
     // Перегрузка оператора + для сложения сигналов
     Signal operator+(const Signal& other) const;
@@ -30,7 +35,10 @@ public:
     void output(std::ostream& os) const;
 
     // Метод для получения значений сигнала
-    std::vector<double> getValues() const;
+    const std::vector<double>& getValues() const;
+
+    // метод для сравнения сигналов
+    void compareSignals(const Signal& original, const Signal& filtered) const;
 
 private:
     std::vector<double> values;

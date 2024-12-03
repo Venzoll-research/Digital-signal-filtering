@@ -1,24 +1,22 @@
 #ifndef FIR_H
 #define FIR_H
 
-#include <string>
-#include <vector>
-#include "signal.h"
+#include "FilterBase.h"
 
-class FIR {
+// Класс для FIR фильтра
+class FIR : public FilterBase {
 public:
     // Конструктор
     FIR(const std::string& name, const std::vector<double>& coefficients);
 
-    // Метод для применения фильтра к сигналу
-    Signal Filter(const Signal& inputSignal) const;
-
-    // Метод для получения имени фильтра
-    std::string getName() const;
+    // Переопределение функции для применения фильтра к сигналу
+    Signal Filter(const Signal& inputSignal) override;
+    // Переопределение функции для применения фильтра к одному значению
+    double operator()(double x_t) override;
 
 private:
-    std::string name;
-    std::vector<double> coefficients;
+    std::vector<double> coefficients; // Коэффициенты фильтра
+    std::vector<double> input_buffer; // Буфер входных значений
 };
 
-#endif  // FIR_H
+#endif // FIR_H

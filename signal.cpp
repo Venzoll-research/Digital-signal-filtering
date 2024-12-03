@@ -6,6 +6,8 @@ Signal::Signal() {}
 // Конструктор с параметром
 Signal::Signal(const std::vector<double>& values) : values(values) {}
 
+Signal::~Signal() {}
+
 // Перегрузка оператора + для сложения сигналов
 Signal Signal::operator+(const Signal& other) const {
     size_t maxSize = std::max(values.size(), other.values.size());
@@ -63,6 +65,35 @@ void Signal::input(std::istream& is) {
 }
 
 // Метод для получения значений сигнала
-std::vector<double> Signal::getValues() const {
+const std::vector<double>& Signal::getValues() const {
     return values;
+}
+
+void Signal::compareSignals(const Signal& original, const Signal& filtered) const {
+    // Сравнение длины сигналов
+    if (original.values.size() != filtered.values.size()) {
+        std::cout << "Длины сигналов не совпадают: "
+                  << original.values.size() << " != " << filtered.values.size() << std::endl;
+        return;
+    }
+
+    // Максимальное отклонение по значению
+    double maxDeviation = 0.0;
+    double sumDeviation = 0.0;
+    double sumSquaredDeviation = 0.0;
+
+
+    for (size_t i = 0; i < original.values.size(); ++i) {
+        double deviation = std::abs(original.values[i] - filtered.values[i]);
+        maxDeviation = std::max(maxDeviation, deviation);
+        sumDeviation += deviation;
+        sumSquaredDeviation += deviation * deviation;
+    }
+
+    double meanDeviation = sumDeviation / original.values.size();
+    double mseDeviation = std::sqrt(sumSquaredDeviation / original.values.size());
+
+    std::cout << "Максимальное отклонение: " << maxDeviation << std::endl;
+    std::cout << "Среднее отклонение: " << meanDeviation << std::endl;
+    std::cout << "Среднеквадратичное отклонение (MSE): " << mseDeviation << std::endl;
 }
