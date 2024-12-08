@@ -17,7 +17,7 @@ Signal FIR::Filter(const Signal& inputSignal) {
 
         double y_t = 0.0;
         for (size_t i = 0; i < coefficients.size(); ++i) {
-            y_t += coefficients[i] * input_buffer[coefficients.size() - i - 1];
+            y_t += coefficients[i] * input_buffer[input_buffer.size() - i - 1];
         }
         outputValues[t] = y_t;
     }
