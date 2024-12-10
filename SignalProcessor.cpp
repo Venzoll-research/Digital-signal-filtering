@@ -4,26 +4,71 @@
 SignalProcessor::SignalProcessor() {}
 
 // Деструктор
-SignalProcessor::~SignalProcessor() {
-    // Удаляем все фильтры
-    for (auto& pair : filters) {
-        delete pair.second;
-    }
+SignalProcessor::~SignalProcessor() {}
 
-    // Удаляем все сумматоры
-    for (auto& pair : summators) {
-        delete pair.second;
+// Копирующий конструктор
+SignalProcessor::SignalProcessor(const SignalProcessor& other) {
+    for (const auto& pair : other.filters) {
+        filters[pair.first] = std::unique_ptr<FilterBase>(pair.second->clone());
     }
+    for (const auto& pair : other.summators) {
+        summators[pair.first] = std::unique_ptr<Summator>(pair.second->clone());
+    }
+    inputSignals = other.inputSignals;
+    connections = other.connections;
+}
+
+// Оператор присваивания
+SignalProcessor& SignalProcessor::operator=(const SignalProcessor& other) {
+    if (this != &other) {
+        filters.clear();
+        summators.clear();
+        inputSignals.clear();
+        connections.clear();
+
+        for (const auto& pair : other.filters) {
+            filters[pair.first] = std::unique_ptr<FilterBase>(pair.second->clone());
+        }
+        for (const auto& pair : other.summators) {
+            summators[pair.first] = std::unique_ptr<Summator>(pair.second->clone());
+        }
+        inputSignals = other.inputSignals;
+        connections = other.connections;
+    }
+    return *this;
+}
+
+// Перемещающий конструктор
+SignalProcessor::SignalProcessor(SignalProcessor&& other) noexcept
+    : filters(std::move(other.filters)),
+      summators(std::move(other.summators)),
+      inputSignals(std::move(other.inputSignals)),
+      connections(std::move(other.connections)) {}
+
+// Перемещающий оператор присваивания
+SignalProcessor& SignalProcessor::operator=(SignalProcessor&& other) noexcept {
+    if (this != &other) {
+        filters = std::move(other.filters);
+        summators = std::move(other.summators);
+        inputSignals = std::move(other.inputSignals);
+        connections = std::move(other.connections);
+    }
+    return *this;
 }
 
 // Метод для добавления фильтра
-void SignalProcessor::addFilter(const std::string& name, FilterBase* filter) {
-    filters[name] = filter;
+void SignalProcessor::addFilter(const std::string& name, std::unique_ptr<FilterBase> filter) {
+    filters[name] = std::move(filter);
 }
 
 // Метод для добавления сумматора
-void SignalProcessor::addSummator(const std::string& name, Summator* summator) {
-    summators[name] = summator;
+void SignalProcessor::addSummator(const std::string& name, std::unique_ptr<Summator> summator) {
+    summators[name] = std::move(summator);
+}
+
+// Метод для установки входного сигнала
+void SignalProcessor::setInputSignal(const std::string& inputName, const Signal& inputSignal) {
+    inputSignals[inputName] = inputSignal;
 }
 
 // Метод для добавления связи между блоками
@@ -32,20 +77,22 @@ void SignalProcessor::addConnection(const std::string& outputName, const std::st
 }
 
 // Метод для расчета выходов всех фильтров для данного входного сигнала
-std::map<std::string, Signal> SignalProcessor::processSignal(const Signal& inputSignal) {
+std::map<std::string, Signal> SignalProcessor::processSignal() {
     std::map<std::string, Signal> outputs;
 
     // Сначала обрабатываем все фильтры
     for (const auto& pair : filters) {
         const std::string& name = pair.first;
-        FilterBase* filter = pair.second;
-        outputs[name] = filter->Filter(inputSignal);
+        FilterBase* filter = pair.second.get();
+        if (inputSignals.find(name) != inputSignals.end()) {
+            outputs[name] = filter->Filter(inputSignals[name]);
+        }
     }
 
     // Затем обрабатываем все сумматоры
     for (const auto& pair : summators) {
         const std::string& name = pair.first;
-        Summator* summator = pair.second;
+        Summator* summator = pair.second.get();
 
         // Получаем входные значения для сумматора
         const auto& inputNames = connections[name];
@@ -62,3 +109,4 @@ std::map<std::string, Signal> SignalProcessor::processSignal(const Signal& input
 
     return outputs;
 }
+

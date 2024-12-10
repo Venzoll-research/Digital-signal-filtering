@@ -17,6 +17,9 @@ public:
     // Переопределение функции для применения сумматора к двум сигналам
     Signal operator()(const Signal& signal1, const Signal& signal2);
 
+    // Переопределение функции для клонирования объекта
+    Summator* clone() const override;
+
 private:
     double u;  // Коэффициент u
     double v;  // Коэффициент v

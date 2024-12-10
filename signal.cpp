@@ -82,7 +82,6 @@ void Signal::compareSignals(const Signal& original, const Signal& filtered) cons
     double sumDeviation = 0.0;
     double sumSquaredDeviation = 0.0;
 
-
     for (size_t i = 0; i < original.values.size(); ++i) {
         double deviation = std::abs(original.values[i] - filtered.values[i]);
         maxDeviation = std::max(maxDeviation, deviation);

@@ -12,6 +12,11 @@ Signal Summator::Filter(const Signal& inputSignal) {
     throw std::runtime_error("Filter method is not applicable for Summator");
 }
 
+// Реализация функции для клонирования объекта
+Summator* Summator::clone() const {
+    return new Summator(*this);
+}
+
 double Summator::operator()(double x_t) {
     // Этот оператор не имеет смысла для сумматора,
     // так как сумматор работает с двумя входными значениями.

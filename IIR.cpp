@@ -4,6 +4,11 @@
 IIR::IIR(const std::string& name, const std::vector<double>& b_coefficients, const std::vector<double>& a_coefficients)
     : FilterBase(name), b_coefficients(b_coefficients), a_coefficients(a_coefficients), input_buffer(b_coefficients.size(), 0.0), output_buffer(a_coefficients.size(), 0.0) {}
 
+// Реализация функции для клонирования объекта
+IIR* IIR::clone() const {
+    return new IIR(*this);
+}
+
 // Реализация функции для применения фильтра к сигналу
 Signal IIR::Filter(const Signal& inputSignal) {
     std::vector<double> inputValues = inputSignal.getValues();

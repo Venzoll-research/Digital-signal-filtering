@@ -4,6 +4,11 @@
 FIR::FIR(const std::string& name, const std::vector<double>& coefficients)
     : FilterBase(name), coefficients(coefficients), input_buffer(coefficients.size(), 0.0) {}
 
+// Реализация функции для клонирования объекта
+FIR* FIR::clone() const {
+    return new FIR(*this);
+}
+
 // Реализация функции для применения фильтра к сигналу
 Signal FIR::Filter(const Signal& inputSignal) {
     std::vector<double> inputValues = inputSignal.getValues();

@@ -1,6 +1,9 @@
 #ifndef FILTERBASE_H
 #define FILTERBASE_H
 
+#include <map>
+#include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -14,16 +17,18 @@ public:
     // Виртуальный деструктор
     virtual ~FilterBase() = default;
 
-    // Чисто виртуальная функция для применения фильтра к сигналу
+    // Виртуальная функция для применения фильтра к сигналу
     virtual Signal Filter(const Signal& inputSignal) = 0;
-    // Чисто виртуальная функция для применения фильтра к одному значению
+    // Виртуальная функция для применения фильтра к одному значению
     virtual double operator()(double x_t) = 0;
     // Функция для получения имени фильтра
     std::string getName() const {
         return name;
     }
+    // Виртуальная функция для клонирования объекта
+    virtual FilterBase* clone() const = 0;
 
-protected:
+private:
     std::string name;  // Имя фильтра
 };
 

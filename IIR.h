@@ -14,11 +14,14 @@ public:
     // Переопределение функции для применения фильтра к одному значению
     double operator()(double x_t) override;
 
+    // Переопределение функции для клонирования объекта
+    IIR* clone() const override;
+
 private:
-    std::vector<double> b_coefficients; // Коэффициенты b
-    std::vector<double> a_coefficients; // Коэффициенты a
-    std::vector<double> input_buffer; // Буфер входных значений
-    std::vector<double> output_buffer; // Буфер выходных значений
+    std::vector<double> b_coefficients;  // Коэффициенты b
+    std::vector<double> a_coefficients;  // Коэффициенты a
+    std::vector<double> input_buffer;    // Буфер входных значений
+    std::vector<double> output_buffer;   // Буфер выходных значений
 };
 
-#endif // IIR_H
+#endif  // IIR_H

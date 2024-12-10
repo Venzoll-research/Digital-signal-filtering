@@ -14,9 +14,12 @@ public:
     // Переопределение функции для применения фильтра к одному значению
     double operator()(double x_t) override;
 
+    // Метод clone
+    FIR* clone() const override;
+
 private:
-    std::vector<double> coefficients; // Коэффициенты фильтра
-    std::vector<double> input_buffer; // Буфер входных значений
+    std::vector<double> coefficients;  // Коэффициенты фильтра
+    std::vector<double> input_buffer;  // Буфер входных значений
 };
 
-#endif // FIR_H
+#endif  // FIR_H
